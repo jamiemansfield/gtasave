@@ -1,7 +1,7 @@
 GtaSave
 =======
 
-GtaSave is a library for reading GTA III-era save file, licenced under the MIT License.
+GtaSave is a library for reading GTA III-era save files, licenced under the MIT License.
 
 ## Support
 

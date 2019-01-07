@@ -28,6 +28,7 @@ package parser
 import (
 	"encoding/binary"
 	"github.com/jamiemansfield/gtasave/util"
+	"math"
 	"reflect"
 )
 
@@ -89,6 +90,12 @@ func read(blockReader *util.Reader, tag *util.GtaTag, f reflect.Value) {
 	if f.Type().Kind() == reflect.Uint32 {
 		raw := blockReader.Splice(tag.Index, tag.Index + 4)
 		value := binary.LittleEndian.Uint32(raw)
+		f.Set(reflect.ValueOf(value))
+	}
+	if f.Type().Kind() == reflect.Float32 {
+		raw := blockReader.Splice(tag.Index, tag.Index + 4)
+		intBits := binary.LittleEndian.Uint32(raw)
+		value := math.Float32frombits(intBits)
 		f.Set(reflect.ValueOf(value))
 	}
 	if f.Type().Kind() == reflect.String {
