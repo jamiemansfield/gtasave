@@ -34,6 +34,38 @@ type Block16 struct {
 	DistanceTravelledByGolfCart float32 `gta:"index:28"`
 	DistanceTravelledByHelicopter float32 `gta:"index:32"`
 	DistanceTravelledByPlane float32 `gta:"index:36"`
+	LongestWheelieDistance float32 `gta:"index:40"`
+	LongestStoppieDistance float32 `gta:"index:44"`
+	LongestTwoWheelsDistance float32 `gta:"index:48"`
+	BudgetWeapons float32 `gta:"index:52"`
+	BudgetFashion float32 `gta:"index:56"`
+	BudgetProperty float32 `gta:"index:60"`
+	BudgetAutoRepair float32 `gta:"index:64"`
+	LongestWheelieTime float32 `gta:"index:68"`
+	LongestStoppieTime float32 `gta:"index:72"`
+	LongestTwoWheelsTime float32 `gta:"index:76"`
+	BudgetFood float32 `gta:"index:80"`
+	Fat float32 `gta:"index:84"`
+	Stamina float32 `gta:"index:88"`
+	Muscle float32 `gta:"index:92"`
+	MaxHealth float32 `gta:"index:100"`
+	// 104: unknown
+	DistanceTravelledBySwimming float32 `gta:"index:108"`
+	DistanceTravelledByBicycle float32 `gta:"index:112"`
+	DistanceTravelledByTreadmill float32 `gta:"index:116"`
+	DistanceTravelledByExerciseBike float32 `gta:"index:120"`
+	BudgetTattoo float32 `gta:"index:124"`
+	BudgetHairdressing float32 `gta:"index:128"`
+	// 132: unknown
+	BudgetProstitute float32 `gta:"index:136"`
+	// 140: unknown
+	GamblingExpenditure float32 `gta:"index:144"`
+	PimpRevenue float32 `gta:"index:148"`
+	GamblingRevenue float32 `gta:"index:152"`
+	GamblingLargestWin float32 `gta:"index:156"`
+	GamblingLargestLoss float32 `gta:"index:160"`
+	BurglaryLargestSwag float32 `gta:"index:164"`
+	BurglaryRevenue float32 `gta:"index:168"`
 
 	WastedByOthers int `gta:"index:328"`
 	Wasted int `gta:"index:332"`
