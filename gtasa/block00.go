@@ -39,8 +39,17 @@ const (
 // See https://gtasa-savegame-editor.github.io/docs/#/block00
 type Block00 struct {
 	Version uint32 `gta:"index:0"`
-	Title string `gta:"index:4,length:66"`
+	SaveName string `gta:"index:4,length:100"`
+	MissionPack uint8 `gta:"index:104"`
+
+	CurrentTown uint32 `gta:"index:108"`
+
+	GlobalTimer uint32 `gta:"index:148"`
+
 	Cheated bool `gta:"index:144"`
+
+	FreeFromCensoring bool `gta:"index:238"`
+
 	TaxiNitro bool `gta:"index:304"`
 	PaidByProstitutes bool `gta:"index:305"`
 }

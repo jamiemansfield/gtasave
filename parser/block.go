@@ -116,6 +116,10 @@ func read(blockReader *util.Reader, tag *util.GtaTag, f reflect.Value) {
 		raw := blockReader.Splice(tag.Index, tag.Index + 1)
 		f.SetBool(raw[0] != 0)
 	}
+	if f.Type().Kind() == reflect.Uint8 {
+		raw := blockReader.Splice(tag.Index, tag.Index + 4)
+		f.Set(reflect.ValueOf(uint8(raw[0])))
+	}
 }
 
 func isAtBoundary(r *util.Reader) bool {
