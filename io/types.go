@@ -23,56 +23,24 @@
  * THE SOFTWARE.
  */
 
-package util
+package io
 
-type Reader struct {
-	data []byte
-	index int
+import (
+	"encoding/binary"
+)
+
+// Reads an unsigned 8-bit integer from the reader.
+func (r *Reader) ReadUInt8(offset int) uint8 {
+	return uint8(r.Peek(offset))
 }
 
-// Gets the length of the data
-func (r *Reader) Length() int {
-	return len(r.data)
+// Reads an unsigned 32-bit integer from the reader.
+func (r *Reader) ReadUInt32(offset int) uint32 {
+	raw := r.Splice(offset, 4)
+	return binary.LittleEndian.Uint32(raw)
 }
 
-// Gets the remaining length to be read
-func (r *Reader) Remaining() int {
-	return len(r.data) - r.index
-}
-
-// Gets the current index
-func (r *Reader) Index() int {
-	return r.index
-}
-
-// Establishes whether there is a readable byte at the given offset
-func (r *Reader) Readable(offset int) bool {
-	return r.index + offset <= len(r.data)
-}
-
-// Establishes whether there is data available to be read
-func (r *Reader) Available() bool {
-	return r.Readable(1)
-}
-
-// Skips the given length of values
-func (r *Reader) Skip(length int) {
-	r.index += length
-}
-
-// Peeks at the value of the given offset
-func (r *Reader) Peek(offset int) byte {
-	return r.data[r.index + offset]
-}
-
-// Splices the data
-func (r *Reader) Splice(start int, end int) []byte {
-	return r.data[start : end]
-}
-
-func CreateReader(data []byte) *Reader {
-	return &Reader{
-		data: data,
-		index: 0,
-	}
+// Reads a boolean from the reader.
+func (r *Reader) ReadBool(offset int) bool {
+	return r.Peek(offset) != 0
 }

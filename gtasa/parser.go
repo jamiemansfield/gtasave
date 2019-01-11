@@ -26,7 +26,7 @@
 package gtasa
 
 import (
-	"encoding/binary"
+	"github.com/jamiemansfield/gtasave/io"
 	"github.com/jamiemansfield/gtasave/util"
 	"math"
 	"reflect"
@@ -36,7 +36,7 @@ func Parse(data []byte, v interface{}) error {
 	// Separate the blocks
 	var blocks [34][]byte
 	var index = 0
-	reader := util.CreateReader(data)
+	reader := io.CreateReader(data)
 	for reader.Available() {
 		if isAtBoundary(reader) {
 			// Skip the block boundary
@@ -61,7 +61,7 @@ func Parse(data []byte, v interface{}) error {
 			return err
 		}
 
-		blockReader := util.CreateReader(blocks[tag.Index])
+		blockReader := io.CreateReader(blocks[tag.Index])
 
 		// Get type information of the block
 		t2 := t.Elem().Field(i)
@@ -81,28 +81,29 @@ func Parse(data []byte, v interface{}) error {
 	return nil
 }
 
-func read(blockReader *util.Reader, tag *util.GtaTag, f reflect.Value) {
+func read(reader *io.Reader, tag *util.GtaTag, f reflect.Value) {
 	if f.Type().Kind() == reflect.Int {
-		raw := blockReader.Splice(tag.Index, tag.Index + 4)
-		value := binary.LittleEndian.Uint32(raw)
+		value := reader.ReadUInt32(tag.Index)
 		f.SetInt(int64(value))
 	}
+	if f.Type().Kind() == reflect.Uint8 {
+		value := reader.ReadUInt8(tag.Index)
+		f.Set(reflect.ValueOf(value))
+	}
 	if f.Type().Kind() == reflect.Uint32 {
-		raw := blockReader.Splice(tag.Index, tag.Index + 4)
-		value := binary.LittleEndian.Uint32(raw)
+		value := reader.ReadUInt32(tag.Index)
 		f.Set(reflect.ValueOf(value))
 	}
 	if f.Type().Kind() == reflect.Float32 {
-		raw := blockReader.Splice(tag.Index, tag.Index + 4)
-		intBits := binary.LittleEndian.Uint32(raw)
+		intBits := reader.ReadUInt32(tag.Index)
 		value := math.Float32frombits(intBits)
 		f.Set(reflect.ValueOf(value))
 	}
 	if f.Type().Kind() == reflect.String {
-		raw := blockReader.Splice(tag.Index, tag.Index + tag.Length)
+		raw := reader.Splice(tag.Index, tag.Length)
 
 		// Encoded in ASCII, padded with /raw/ zeros to make up the length.
-		reader := util.CreateReader(raw)
+		reader := io.CreateReader(raw)
 
 		var length int
 		for reader.Available() && reader.Peek(0) != 0 {
@@ -110,19 +111,14 @@ func read(blockReader *util.Reader, tag *util.GtaTag, f reflect.Value) {
 			length += 1
 		}
 
-		f.SetString(string(reader.Splice(0, length)))
+		f.SetString(string(reader.Splice(-length, length)))
 	}
 	if f.Type().Kind() == reflect.Bool {
-		raw := blockReader.Splice(tag.Index, tag.Index + 1)
-		f.SetBool(raw[0] != 0)
-	}
-	if f.Type().Kind() == reflect.Uint8 {
-		raw := blockReader.Splice(tag.Index, tag.Index + 4)
-		f.Set(reflect.ValueOf(uint8(raw[0])))
+		f.SetBool(reader.ReadBool(tag.Index))
 	}
 }
 
-func isAtBoundary(r *util.Reader) bool {
+func isAtBoundary(r *io.Reader) bool {
 	return r.Peek(0) == 'B' &&
 		r.Peek(1) == 'L' &&
 		r.Peek(2) == 'O' &&
@@ -130,12 +126,12 @@ func isAtBoundary(r *util.Reader) bool {
 		r.Peek(4) == 'K'
 }
 
-func readBlock(r *util.Reader) []byte {
+func readBlock(r *io.Reader) []byte {
 	var start = r.Index()
 
 	for r.Available() && !isAtBoundary(r) {
 		r.Skip(1)
 	}
 
-	return r.Splice(start, r.Index())
+	return r.Splice(start - r.Index(), r.Index() - start)
 }
