@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package parser
+package gtasa
 
 import (
 	"encoding/binary"

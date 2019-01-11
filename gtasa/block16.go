@@ -27,6 +27,9 @@ package gtasa
 
 // See https://gtasa-savegame-editor.github.io/docs/#/block16
 type Block16 struct {
+	ProgressMade float32 `gta:"index:0"`
+	MaxProgress float32 `gta:"index:4"`
+
 	DistanceTravelledByFoot float32 `gta:"index:12"`
 	DistanceTravelledByCar float32 `gta:"index:16"`
 	DistanceTravelledByMotorbike float32 `gta:"index:20"`
@@ -105,4 +108,9 @@ type Block16 struct {
 
 	SkillMotorbike int `gta:"index:764"`
 	SkillCycling int `gta:"index:768"`
+}
+
+// Gets the progress made, as a percentage value
+func (b *Block16) GetProgress() float32 {
+	return b.ProgressMade / b.MaxProgress * 100
 }

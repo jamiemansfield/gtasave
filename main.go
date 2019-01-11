@@ -29,7 +29,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/jamiemansfield/gtasave/gtasa"
-	"github.com/jamiemansfield/gtasave/parser"
 	"io/ioutil"
 )
 
@@ -40,7 +39,7 @@ func main() {
 	}
 
 	var save gtasa.Save
-	err = parser.Parse(data, &save)
+	err = gtasa.Parse(data, &save)
 	if err != nil {
 		panic(err)
 	}
