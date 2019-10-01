@@ -25,39 +25,28 @@
 
 package gtasa
 
-const (
-	VERSION_1_00_UNMODIFIED uint32 = 0x35da8175
-	VERSION_1_00_MODIFIED uint32 = 0x65f3e583
-	VERSION_1_01_UNMODIFIED uint32 = 0x9a6ebe58
-	VERSION_1_01_MODIFIED uint32 = 0x9345765e
-	VERSION_2_00_UNMODIFIED uint32 = 0xfd148df6
-	VERSION_2_00_GERMAN uint32 = 0x5d31cc22
-	VERSION_PS2_V1 uint32 = 0x641ddc4c
-	VERSION_PS2_V2 uint32 = 0xfd148df6
-)
-
-// See https://gtasa-savegame-editor.github.io/docs/#/block00
-type Block00 struct {
-	Version uint32 `gta:"index:0"`
-	SaveName string `gta:"index:4,length:100"`
-	MissionPack uint32 `gta:"index:104"` // TODO: source?
-	CurrentTown uint32 `gta:"index:108"` // TODO: source?
-	Camera Camera `gta:"index:112,length:12"`
-	MinuteLength uint32 `gta:"index:124"`
-	WeatherTimer uint32 `gta:"index:128"`
-
-	Cheated bool `gta:"index:144"`
-
-	GlobalTimer uint32 `gta:"index:148"`
-
-	FreeFromCensoring bool `gta:"index:238"`
-
-	TaxiNitro bool `gta:"index:304"`
-	PaidByProstitutes bool `gta:"index:305"`
+// See https://gtasa-savegame-editor.github.io/docs/#/block11
+type Block11 struct {
+	// 4 bytes
+	Ballas GangWeapons `gta:"index:4,length:12"`
+	// 4 bytes
+	GroveStreet GangWeapons `gta:"index:20,length:12"`
+	// 4 bytes
+	LosSantosVagos GangWeapons `gta:"index:36,length:12"`
+	// 4 bytes
+	SanFierroRifa GangWeapons `gta:"index:52,length:12"`
+	// 4 bytes
+	DuNangBoys GangWeapons `gta:"index:68,length:12"`
+	// 4 bytes
+	ItalianMafia GangWeapons `gta:"index:84,length:12"`
+	// 4 bytes
+	Triads GangWeapons `gta:"index:100,length:12"`
+	// 4 bytes
+	VarrioLosAztecas GangWeapons `gta:"index:116,length:12"`
 }
 
-type Camera struct {
-	X float32 `gta:"index:0"`
-	Y float32 `gta:"index:4"`
-	Z float32 `gta:"index:8"`
+type GangWeapons struct {
+	Pistol uint32 `gta:"index:0"`
+	MachineGun uint32 `gta:"index:4"`
+	Melee uint32 `gta:"index:8"`
 }

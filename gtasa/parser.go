@@ -116,6 +116,21 @@ func read(reader *io.Reader, tag *util.GtaTag, f reflect.Value) {
 	if f.Type().Kind() == reflect.Bool {
 		f.SetBool(reader.ReadBool(tag.Index))
 	}
+	if f.Type().Kind() == reflect.Struct {
+		raw := reader.Splice(tag.Index, tag.Length)
+		reader := io.CreateReader(raw)
+
+		for j := 0; j < f.NumField(); j++ {
+			field2 := f.Type().Field(j)
+
+			tag, err := util.GetGtaTag(field2.Tag.Get("gta"))
+			if err != nil {
+				return
+			}
+
+			read(reader, tag, f.Field(j))
+		}
+	}
 }
 
 func isAtBoundary(r *io.Reader) bool {

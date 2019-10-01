@@ -28,6 +28,7 @@ package gtasa
 type Save struct {
 	Block00 Block00 `gta:"index:0"`
 	Block04 Block04 `gta:"index:4"`
+	Block11 Block11 `gta:"index:11"`
 	Block15 Block15 `gta:"index:15"`
 	Block16 Block16 `gta:"index:16"`
 	Block23 Block23 `gta:"index:23"`
