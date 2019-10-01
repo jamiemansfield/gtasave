@@ -74,28 +74,27 @@ func Parse(data []byte, v interface{}) error {
 }
 
 func read(reader *io.Reader, tag *util.GtaTag, f reflect.Value) {
-	if f.Type().Kind() == reflect.Int {
+	switch f.Type().Kind() {
+	case reflect.Bool:
+		value := reader.ReadBool(tag.Index)
+		f.SetBool(value)
+	case reflect.Int:
 		value := reader.ReadUInt32(tag.Index)
 		f.SetInt(int64(value))
-	}
-	if f.Type().Kind() == reflect.Uint8 {
+	case reflect.Uint8:
 		value := reader.ReadUInt8(tag.Index)
-		f.Set(reflect.ValueOf(value))
-	}
-	if f.Type().Kind() == reflect.Uint16 {
+		f.Set(reflect.ValueOf(value).Convert(f.Type()))
+	case reflect.Uint16:
 		value := reader.ReadUInt16(tag.Index)
 		f.Set(reflect.ValueOf(value))
-	}
-	if f.Type().Kind() == reflect.Uint32 {
+	case reflect.Uint32:
 		value := reader.ReadUInt32(tag.Index)
 		f.Set(reflect.ValueOf(value))
-	}
-	if f.Type().Kind() == reflect.Float32 {
+	case reflect.Float32:
 		intBits := reader.ReadUInt32(tag.Index)
 		value := math.Float32frombits(intBits)
 		f.Set(reflect.ValueOf(value))
-	}
-	if f.Type().Kind() == reflect.String {
+	case reflect.String:
 		raw := reader.Splice(tag.Index, tag.Length)
 
 		// Encoded in ASCII, padded with /raw/ zeros to make up the length.
@@ -108,48 +107,26 @@ func read(reader *io.Reader, tag *util.GtaTag, f reflect.Value) {
 		}
 
 		f.SetString(string(reader.Splice(-length, length)))
-	}
-	if f.Type().Kind() == reflect.Bool {
-		f.SetBool(reader.ReadBool(tag.Index))
-	}
-	if f.Type().Kind() == reflect.Struct {
+	case reflect.Struct:
 		raw := reader.Splice(tag.Index, tag.Length)
 		reader := io.CreateReader(raw)
-
 		readStruct(reader, f.Type(), f)
-	}
-	if f.Type().Kind() == reflect.Slice {
+	case reflect.Slice:
 		// 4 bytes for length of array
 		length := int(reader.ReadUInt32(tag.Index))
+
+		// Create the slice
+		f.Set(reflect.MakeSlice(f.Type(), length, length))
 
 		raw := reader.Splice(tag.Index + 4, tag.Length * length)
 		reader := io.CreateReader(raw)
 
-		f.Set(reflect.MakeSlice(f.Type(), length, length))
-
-		for i := 0; i < length; i++ {
-			subReader := io.CreateReader(reader.Splice(i * length, length))
-
-			read(subReader, &util.GtaTag{
-				// We're using a new reader, so need to start fresh
-				Index: 0,
-				Length: tag.Length,
-			}, f.Index(i))
-		}
-	}
-	if f.Type().Kind() == reflect.Array {
+		readArrayOrSlice(reader, tag, f)
+	case reflect.Array:
 		raw := reader.Splice(tag.Index, f.Len() * tag.Length)
 		reader := io.CreateReader(raw)
 
-		for i := 0; i < f.Len(); i++ {
-			subReader := io.CreateReader(reader.Splice(i * f.Len(), f.Len()))
-
-			read(subReader, &util.GtaTag{
-				// We're using a new reader, so need to start fresh
-				Index: 0,
-				Length: tag.Length,
-			}, f.Index(i))
-		}
+		readArrayOrSlice(reader, tag, f)
 	}
 }
 
@@ -166,6 +143,20 @@ func readStruct(reader *io.Reader, structType reflect.Type, structValue reflect.
 		}
 
 		read(reader, tag, fieldValue)
+	}
+}
+
+// This method populates a struct field, with an array or slice
+func readArrayOrSlice(reader *io.Reader, tag *util.GtaTag, value reflect.Value) {
+	// Iterate over the array
+	for i := 0; i < value.Len(); i++ {
+		subReader := io.CreateReader(reader.Splice(i * value.Len(), value.Len()))
+
+		read(subReader, &util.GtaTag{
+			// We're using a new reader, so need to start fresh
+			Index: 0,
+			Length: tag.Length,
+		}, value.Index(i))
 	}
 }
 

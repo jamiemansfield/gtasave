@@ -25,11 +25,21 @@
 
 package gtasa
 
+import (
+	"strconv"
+)
+
 // https://gtasa-savegame-editor.github.io/docs/#/block20
 type Block20 struct {
-	Tags []uint8 `gta:"index:0,length:1"`
+	Tags []Tag `gta:"index:0,length:1"`
 }
 
-func IsSprayed(v uint8) bool {
-	return v>= 0xE5
+type Tag uint8
+
+func (tag Tag) MarshalJSON() ([]byte, error) {
+	return []byte(strconv.Itoa(int(tag))), nil
+}
+
+func (tag Tag) IsSprayed() bool {
+	return tag >= 0xE5
 }
