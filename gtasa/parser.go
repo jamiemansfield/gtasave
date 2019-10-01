@@ -66,16 +66,8 @@ func Parse(data []byte, v interface{}) error {
 		// Get type information of the block
 		t2 := t.Elem().Field(i)
 
-		for j := 0; j < t2.NumField(); j++ {
-			field2 := t2.Type().Field(j)
-
-			tag, err := util.GetGtaTag(field2.Tag.Get("gta"))
-			if err != nil {
-				return err
-			}
-
-			read(blockReader, tag, t2.Field(j))
-		}
+		// Read the struct
+		readStruct(blockReader, t2.Type(), t2)
 	}
 
 	return nil
@@ -120,16 +112,56 @@ func read(reader *io.Reader, tag *util.GtaTag, f reflect.Value) {
 		raw := reader.Splice(tag.Index, tag.Length)
 		reader := io.CreateReader(raw)
 
-		for j := 0; j < f.NumField(); j++ {
-			field2 := f.Type().Field(j)
+		readStruct(reader, f.Type(), f)
+	}
+	if f.Type().Kind() == reflect.Slice {
+		// 4 bytes for length of array
+		length := int(reader.ReadUInt32(tag.Index))
 
-			tag, err := util.GetGtaTag(field2.Tag.Get("gta"))
-			if err != nil {
-				return
-			}
+		raw := reader.Splice(tag.Index + 4, tag.Length * length)
+		reader := io.CreateReader(raw)
 
-			read(reader, tag, f.Field(j))
+		f.Set(reflect.MakeSlice(f.Type(), length, length))
+
+		for i := 0; i < length; i++ {
+			subReader := io.CreateReader(reader.Splice(i * length, length))
+
+			read(subReader, &util.GtaTag{
+				// We're using a new reader, so need to start fresh
+				Index: 0,
+				Length: tag.Length,
+			}, f.Index(i))
 		}
+	}
+	if f.Type().Kind() == reflect.Array {
+		raw := reader.Splice(tag.Index, f.Len() * tag.Length)
+		reader := io.CreateReader(raw)
+
+		for i := 0; i < f.Len(); i++ {
+			subReader := io.CreateReader(reader.Splice(i * f.Len(), f.Len()))
+
+			read(subReader, &util.GtaTag{
+				// We're using a new reader, so need to start fresh
+				Index: 0,
+				Length: tag.Length,
+			}, f.Index(i))
+		}
+	}
+}
+
+// This method populates a struct's fields with values from the reader.
+func readStruct(reader *io.Reader, structType reflect.Type, structValue reflect.Value) {
+	// Iterate over the structs fields
+	for i := 0; i < structType.NumField(); i++ {
+		fieldType := structType.Field(i)
+		fieldValue := structValue.Field(i)
+
+		tag, err := util.GetGtaTag(fieldType.Tag.Get("gta"))
+		if err != nil {
+			return
+		}
+
+		read(reader, tag, fieldValue)
 	}
 }
 

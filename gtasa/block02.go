@@ -25,33 +25,20 @@
 
 package gtasa
 
-const (
-	VERSION_1_00_UNMODIFIED uint32 = 0x35da8175
-	VERSION_1_00_MODIFIED uint32 = 0x65f3e583
-	VERSION_1_01_UNMODIFIED uint32 = 0x9a6ebe58
-	VERSION_1_01_MODIFIED uint32 = 0x9345765e
-	VERSION_2_00_UNMODIFIED uint32 = 0xfd148df6
-	VERSION_2_00_GERMAN uint32 = 0x5d31cc22
-	VERSION_PS2_V1 uint32 = 0x641ddc4c
-	VERSION_PS2_V2 uint32 = 0xfd148df6
-)
+// See https://gtasa-savegame-editor.github.io/docs/#/block02
+// See https://gtamods.com/wiki/Saves_(GTA_SA)#Block_2:_Players_.26_Objects
+type Block02 struct {
+	Players []Player `gta:"index:0,length:548"`
+}
 
-// See https://gtasa-savegame-editor.github.io/docs/#/block00
-type Block00 struct {
-	Version uint32 `gta:"index:0"`
-	SaveName string `gta:"index:4,length:100"`
-	MissionPack uint32 `gta:"index:104"` // TODO: source?
-	CurrentTown uint32 `gta:"index:108"` // TODO: source?
-	Camera Vector3f `gta:"index:112,length:12"`
-	MinuteLength uint32 `gta:"index:124"`
-	WeatherTimer uint32 `gta:"index:128"`
+type Player struct {
+	Position Vector3f `gta:"index:16"`
+	Health float32 `gta:"index:28"`
+	Armor float32 `gta:"index:32"`
+	Weapons [13]Weapon `gta:"index:36,length:28"`
+}
 
-	Cheated bool `gta:"index:144"`
-
-	GlobalTimer uint32 `gta:"index:148"`
-
-	FreeFromCensoring bool `gta:"index:238"`
-
-	TaxiNitro bool `gta:"index:304"`
-	PaidByProstitutes bool `gta:"index:305"`
+type Weapon struct {
+	Type uint32 `gta:"index:0"`
+	Ammo uint32 `gta:"index:12"`
 }
