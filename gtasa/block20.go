@@ -23,30 +23,13 @@
  * THE SOFTWARE.
  */
 
-package io
+package gtasa
 
-import (
-	"encoding/binary"
-)
-
-// Reads an unsigned 8-bit integer from the reader.
-func (r *Reader) ReadUInt8(offset int) uint8 {
-	return uint8(r.Peek(offset))
+// https://gtasa-savegame-editor.github.io/docs/#/block20
+type Block20 struct {
+	Tags []uint8 `gta:"index:0,length:1"`
 }
 
-// Reads an unsigned 16-bit integer from the reader.
-func (r *Reader) ReadUInt16(offset int) uint16 {
-	raw := r.Splice(offset, 2)
-	return binary.LittleEndian.Uint16(raw)
-}
-
-// Reads an unsigned 32-bit integer from the reader.
-func (r *Reader) ReadUInt32(offset int) uint32 {
-	raw := r.Splice(offset, 4)
-	return binary.LittleEndian.Uint32(raw)
-}
-
-// Reads a boolean from the reader.
-func (r *Reader) ReadBool(offset int) bool {
-	return r.Peek(offset) != 0
+func IsSprayed(v uint8) bool {
+	return v>= 0xE5
 }

@@ -32,6 +32,7 @@ type Save struct {
 	Block11 Block11 `gta:"index:11"`
 	Block15 Block15 `gta:"index:15"`
 	Block16 Block16 `gta:"index:16"`
+	Block20 Block20 `gta:"index:20"`
 	Block23 Block23 `gta:"index:23"`
 }
 

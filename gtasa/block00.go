@@ -50,7 +50,18 @@ type Block00 struct {
 
 	GlobalTimer uint32 `gta:"index:148"`
 
+	FrenchLanguage bool `gta:"index:236"`
+	GermanLanguage bool `gta:"index:237"`
 	FreeFromCensoring bool `gta:"index:238"`
+
+	SystemYear uint16 `gta:"index:286"`
+	SystemMonth uint16 `gta:"index:288"`
+	SystemDayOfWeek uint16 `gta:"index:290"`
+	SystemDay uint16 `gta:"index:292"`
+	SystemHour uint16 `gta:"index:294"`
+	SystemMinute uint16 `gta:"index:296"`
+	SystemSecond uint16 `gta:"index:298"`
+	SystemMillisecond uint16 `gta:"index:300"`
 
 	TaxiNitro bool `gta:"index:304"`
 	PaidByProstitutes bool `gta:"index:305"`
