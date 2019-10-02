@@ -93,6 +93,10 @@ func read(reader *io.Reader, tag *util.GtaTag, f reflect.Value) {
 	case reflect.Float32:
 		intBits := reader.ReadUInt32(tag.Index)
 		value := math.Float32frombits(intBits)
+		// NaN check
+		if value != value {
+			value = -1
+		}
 		f.Set(reflect.ValueOf(value))
 	case reflect.String:
 		raw := reader.Splice(tag.Index, tag.Length)

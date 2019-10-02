@@ -29,16 +29,25 @@ package gtasa
 // See https://gtamods.com/wiki/Saves_(GTA_SA)#Block_2:_Players_.26_Objects
 type Block02 struct {
 	Players []Player `gta:"index:0,length:548"`
+	Objects []Object `gta:"index:552"` // todo: use offset rather than index
 }
 
 type Player struct {
+	Handle uint32 `gta:"index:0"`
+	ModelId uint32 `gta:"index:4"`
+	PedType uint32 `gta:"index:8"`
 	Position Vector3f `gta:"index:16"`
 	Health float32 `gta:"index:28"`
 	Armor float32 `gta:"index:32"`
 	Weapons [13]Weapon `gta:"index:36,length:28"`
+	CurrentWeaponSlot uint8 `gta:"index:401"`
 }
 
 type Weapon struct {
-	Type uint32 `gta:"index:0"`
+	Type uint32 `gta:"index:0"` // todo: WeaponType
 	Ammo uint32 `gta:"index:12"`
+}
+
+type Object struct {
+	Position Vector3f `gta:"index:16"`
 }
