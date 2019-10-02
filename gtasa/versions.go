@@ -25,33 +25,21 @@
 
 package gtasa
 
-// See https://gtasa-savegame-editor.github.io/docs/#/block00
-type Block00 struct {
-	Version Version `gta:"index:0"`
-	SaveName string `gta:"index:4,length:100"`
-	MissionPack uint32 `gta:"index:104"` // TODO: source?
-	CurrentTown uint32 `gta:"index:108"` // TODO: source?
-	Camera Vector3f `gta:"index:112,length:12"`
-	MinuteLength uint32 `gta:"index:124"`
-	WeatherTimer uint32 `gta:"index:128"`
+//go:generate stringer -type=Version
 
-	Cheated bool `gta:"index:144"`
+type Version uint32
 
-	GlobalTimer uint32 `gta:"index:148"`
+const (
+	VERSION_1_00_UNMODIFIED Version = 0x35da8175
+	VERSION_1_00_MODIFIED Version = 0x65f3e583
+	VERSION_1_01_UNMODIFIED Version = 0x9a6ebe58
+	VERSION_1_01_MODIFIED Version = 0x9345765e
+	VERSION_2_00_UNMODIFIED Version = 0xfd148df6
+	VERSION_2_00_GERMAN Version = 0x5d31cc22
+	VERSION_PS2_V1 Version = 0x641ddc4c
+	// TODO(same as VERSION_2_00_UNMODIFIED): VERSION_PS2_V2 Version = 0xfd148df6
+)
 
-	FrenchLanguage bool `gta:"index:236"`
-	GermanLanguage bool `gta:"index:237"`
-	FreeFromCensoring bool `gta:"index:238"`
-
-	SystemYear uint16 `gta:"index:286"`
-	SystemMonth uint16 `gta:"index:288"`
-	SystemDayOfWeek uint16 `gta:"index:290"`
-	SystemDay uint16 `gta:"index:292"`
-	SystemHour uint16 `gta:"index:294"`
-	SystemMinute uint16 `gta:"index:296"`
-	SystemSecond uint16 `gta:"index:298"`
-	SystemMillisecond uint16 `gta:"index:300"`
-
-	TaxiNitro bool `gta:"index:304"`
-	PaidByProstitutes bool `gta:"index:305"`
+func (i Version) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + i.String() + "\""), nil
 }

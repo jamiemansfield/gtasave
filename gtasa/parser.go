@@ -89,7 +89,7 @@ func read(reader *io.Reader, tag *util.GtaTag, f reflect.Value) {
 		f.Set(reflect.ValueOf(value))
 	case reflect.Uint32:
 		value := reader.ReadUInt32(tag.Index)
-		f.Set(reflect.ValueOf(value))
+		f.Set(reflect.ValueOf(value).Convert(f.Type()))
 	case reflect.Float32:
 		intBits := reader.ReadUInt32(tag.Index)
 		value := math.Float32frombits(intBits)

@@ -46,7 +46,7 @@ type Block11 struct {
 }
 
 type GangWeapons struct {
-	Pistol uint32 `gta:"index:0"`
-	MachineGun uint32 `gta:"index:4"`
-	Melee uint32 `gta:"index:8"`
+	Pistol WeaponType `gta:"index:0"`
+	MachineGun WeaponType `gta:"index:4"`
+	Melee WeaponType `gta:"index:8"`
 }
