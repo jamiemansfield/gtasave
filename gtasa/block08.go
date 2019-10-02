@@ -23,74 +23,16 @@
  * THE SOFTWARE.
  */
 
-package util
+package gtasa
 
-import (
-	"strconv"
-	"strings"
-)
-
-type SliceLengthType int
-
-const (
-	SliceUint16 SliceLengthType = iota
-	SliceUint32
-)
-
-func (t SliceLengthType) GetLength() int {
-	switch t {
-	default:
-		return 4
-	case SliceUint32:
-		return 4
-	case SliceUint16:
-		return 2
-	}
+// See https://gtasa-savegame-editor.github.io/docs/#/block08
+type Block08 struct {
+	WastedSpawns []Spawn `gta:"index:0,length:20,slice_type:uint16"`
+	BustedSpawns []Spawn `gta:"index:162,length:20,slice_type:uint16"`
 }
 
-type GtaTag struct {
-	Index int
-	Length int
-
-	// Slices
-	SliceLengthType SliceLengthType
-}
-
-func GetGtaTag(tag string) (*GtaTag, error) {
-	args := strings.Split(tag, ",")
-	var index int
-	var length int
-	var sliceType = SliceUint32
-
-	for i := 0; i < len(args); i++ {
-		if strings.HasPrefix(args[i], "index:") {
-			i, err := strconv.Atoi(args[i][6:])
-			if err != nil {
-				return nil, err
-			}
-			index = i
-		}
-		if strings.HasPrefix(args[i], "length:") {
-			i, err := strconv.Atoi(args[i][7:])
-			if err != nil {
-				return nil, err
-			}
-			length = i
-		}
-		if strings.HasPrefix(args[i], "slice_type:") {
-			val := args[i][len("slice_type:"):]
-			switch val {
-			case "uint32":
-				sliceType = SliceUint32
-			case "uint16":
-				sliceType = SliceUint16
-			}
-		}
-	}
-
-	return &GtaTag{
-		Index: index,
-		Length: length,
-		SliceLengthType: sliceType,
-	}, nil
+type Spawn struct {
+	Position Vector3f `gta:"index:0"`
+	Heading float32 `gta:"index:12"`
+	Island uint16 `gta:"index:16"`
 }

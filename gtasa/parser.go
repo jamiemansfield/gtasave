@@ -119,13 +119,24 @@ func read(reader *io.Reader, tag *util.GtaTag, f reflect.Value) {
 		reader := io.CreateReader(raw)
 		readStruct(reader, f.Type(), f)
 	case reflect.Slice:
+		sliceType := tag.SliceLengthType
+
 		// 4 bytes for length of array
-		length := int(reader.ReadUInt32(tag.Index))
+		length := func() int {
+			switch sliceType {
+			default:
+				return int(reader.ReadUInt32(tag.Index))
+			case util.SliceUint32:
+				return int(reader.ReadUInt32(tag.Index))
+			case util.SliceUint16:
+				return int(reader.ReadUInt16(tag.Index))
+			}
+		}()
 
 		// Create the slice
 		f.Set(reflect.MakeSlice(f.Type(), length, length))
 
-		raw := reader.Splice(tag.Index + 4, tag.Length * length)
+		raw := reader.Splice(tag.Index + sliceType.GetLength(), tag.Length * length)
 		reader := io.CreateReader(raw)
 
 		readArrayOrSlice(reader, tag, f)
