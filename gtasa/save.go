@@ -34,6 +34,7 @@ type Save struct {
 	Block16 Block16 `gta:"index:16"`
 	Block20 Block20 `gta:"index:20"`
 	Block23 Block23 `gta:"index:23"`
+	Block24 Block24 `gta:"index:24"`
 }
 
 type Vector3f struct {

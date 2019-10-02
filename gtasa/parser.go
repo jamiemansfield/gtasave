@@ -84,6 +84,9 @@ func read(reader *io.Reader, tag *util.GtaTag, f reflect.Value) {
 	case reflect.Uint8:
 		value := reader.ReadUInt8(tag.Index)
 		f.Set(reflect.ValueOf(value).Convert(f.Type()))
+	case reflect.Int8:
+		value := reader.ReadInt8(tag.Index)
+		f.Set(reflect.ValueOf(value).Convert(f.Type()))
 	case reflect.Uint16:
 		value := reader.ReadUInt16(tag.Index)
 		f.Set(reflect.ValueOf(value))

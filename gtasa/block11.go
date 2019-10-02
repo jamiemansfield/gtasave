@@ -27,26 +27,19 @@ package gtasa
 
 // See https://gtasa-savegame-editor.github.io/docs/#/block11
 type Block11 struct {
-	// 4 bytes
-	Ballas GangWeapons `gta:"index:4,length:12"`
-	// 4 bytes
-	GroveStreet GangWeapons `gta:"index:20,length:12"`
-	// 4 bytes
-	LosSantosVagos GangWeapons `gta:"index:36,length:12"`
-	// 4 bytes
-	SanFierroRifa GangWeapons `gta:"index:52,length:12"`
-	// 4 bytes
-	DuNangBoys GangWeapons `gta:"index:68,length:12"`
-	// 4 bytes
-	ItalianMafia GangWeapons `gta:"index:84,length:12"`
-	// 4 bytes
-	Triads GangWeapons `gta:"index:100,length:12"`
-	// 4 bytes
-	VarrioLosAztecas GangWeapons `gta:"index:116,length:12"`
+	Ballas GangInfo `gta:"index:0,length:16"`
+	GroveStreet GangInfo `gta:"index:16,length:16"`
+	LosSantosVagos GangInfo `gta:"index:32,length:16"`
+	SanFierroRifa GangInfo `gta:"index:48,length:16"`
+	DuNangBoys GangInfo `gta:"index:64,length:16"`
+	ItalianMafia GangInfo `gta:"index:80,length:16"`
+	Triads GangInfo `gta:"index:96,length:16"`
+	VarrioLosAztecas GangInfo `gta:"index:112,length:16"`
 }
 
-type GangWeapons struct {
-	Pistol WeaponType `gta:"index:0"`
-	MachineGun WeaponType `gta:"index:4"`
-	Melee WeaponType `gta:"index:8"`
+type GangInfo struct {
+	PedTypeOverride int8 `gta:"index:0"`
+	Pistol WeaponType `gta:"index:4"`
+	MachineGun WeaponType `gta:"index:8"`
+	Melee WeaponType `gta:"index:12"`
 }

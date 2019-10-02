@@ -23,35 +23,20 @@
  * THE SOFTWARE.
  */
 
-package io
+package gtasa
 
-import (
-	"encoding/binary"
-)
-
-// Reads an signed 8-bit integer from the reader.
-func (r *Reader) ReadInt8(offset int) int8 {
-	return int8(r.Peek(offset))
+// See https://gtasa-savegame-editor.github.io/docs/#/block24
+type Block24 struct {
+	StuntJumps []StuntJump `gta:"index:0,length:68"`
 }
 
-// Reads an unsigned 8-bit integer from the reader.
-func (r *Reader) ReadUInt8(offset int) uint8 {
-	return uint8(r.Peek(offset))
-}
-
-// Reads an unsigned 16-bit integer from the reader.
-func (r *Reader) ReadUInt16(offset int) uint16 {
-	raw := r.Splice(offset, 2)
-	return binary.LittleEndian.Uint16(raw)
-}
-
-// Reads an unsigned 32-bit integer from the reader.
-func (r *Reader) ReadUInt32(offset int) uint32 {
-	raw := r.Splice(offset, 4)
-	return binary.LittleEndian.Uint32(raw)
-}
-
-// Reads a boolean from the reader.
-func (r *Reader) ReadBool(offset int) bool {
-	return r.Peek(offset) != 0
+type StuntJump struct {
+	StartZone1 Vector3f `gta:"index:0"`
+	StartZone2 Vector3f `gta:"index:12"`
+	LandZone1 Vector3f `gta:"index:24"`
+	LandZone2 Vector3f `gta:"index:36"`
+	Camera Vector3f `gta:"index:48"`
+	Reward uint32 `gta:"index:60"`
+	Completed bool `gta:"index:64"`
+	Found bool `gta:"index:65"`
 }
